@@ -14,5 +14,6 @@ promise
   })
   .catch((err) => console.error(err));
 
-const ObjectId = ObjectId;
+const objectId = ObjectId;
+
 export { db, ObjectId };

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import { db } from "../db/database";
-import joi, { func } from "joi";
+import { db } from "../db/database.js";
+import joi from "joi";
 
 export async function createUser(req, res) {
   const user = req.body;

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import authRouter from "./routes/authRouter.js";
 
 async function main() {
   dotenv.config();
@@ -9,8 +10,9 @@ async function main() {
 
   server.use(cors());
   server.use(express.json());
+  server.use(authRouter);
 
-  PORT = process.env.PORT || 3333;
+  const PORT = process.env.PORT || 3333;
 
   server.listen(PORT, () => {
     console.log(`O servidor subiu na porta ${PORT}`);
