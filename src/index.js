@@ -2,7 +2,7 @@ import express, { json } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routes/authRouter.js";
-import validateUser from "./middlewares/validateUser.js";
+import transactionRouter from "./routes/transactionRouter.js";
 
 async function main() {
   dotenv.config();
@@ -12,8 +12,8 @@ async function main() {
   server.use(cors());
   server.use(json());
 
-  // server.use(validateUser)
   server.use(authRouter);
+  server.use(transactionRouter);
 
   const PORT = process.env.PORT || 3333;
 
