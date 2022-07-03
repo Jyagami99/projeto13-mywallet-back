@@ -8,9 +8,8 @@ async function validateUser(req, res, next) {
   if (!session) {
     return res.sendStatus(401);
   }
-
+  
   res.locals.session = session;
-
   next();
 }
 

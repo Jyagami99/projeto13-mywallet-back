@@ -1,17 +1,12 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import { db } from "../db/database.js";
-import joi from "joi";
+import { signInUserSchema, signUpUserSchema } from "../schemas/userSchema.js";
 
 export async function createUser(req, res) {
   try {
     const user = req.body;
-    const userSchema = joi.object({
-      name: joi.string().min(1).required(),
-      email: joi.string().email().required(),
-      password: joi.string().required(),
-    });
-    const { error } = userSchema.validate(user);
+    const { error } = signInUserSchema.validate(user);
 
     if (error) {
       return res.sendStatus(422);
@@ -31,11 +26,7 @@ export async function createUser(req, res) {
 export async function loginUser(req, res) {
   try {
     const user = req.body;
-    const userSchema = joi.object({
-      email: joi.string().email().required(),
-      password: joi.string().required(),
-    });
-    const { error } = userSchema.validate(user);
+    const { error } = signUpUserSchema.validate(user);
 
     if (error) {
       return res.sendStatus(422);
