@@ -6,7 +6,7 @@ import { signInUserSchema, signUpUserSchema } from "../schemas/userSchema.js";
 export async function createUser(req, res) {
   try {
     const user = req.body;
-    const { error } = signInUserSchema.validate(user);
+    const { error } = signUpUserSchema.validate(user);
 
     if (error) {
       return res.sendStatus(422);
@@ -14,9 +14,11 @@ export async function createUser(req, res) {
 
     const encryptedPassword = bcrypt.hashSync(user.password, 10);
 
-    await db
-      .collection("users")
-      .insertOne({ ...user, password: encryptedPassword });
+    await db.collection("users").insertOne({
+      name: user.name,
+      email: user.email,
+      password: encryptedPassword,
+    });
     res.status(201).send("Usuário criado com sucesso");
   } catch (error) {
     res.status(500).send(error);
@@ -26,7 +28,7 @@ export async function createUser(req, res) {
 export async function loginUser(req, res) {
   try {
     const user = req.body;
-    const { error } = signUpUserSchema.validate(user);
+    const { error } = signInUserSchema.validate(user);
 
     if (error) {
       return res.sendStatus(422);
@@ -49,5 +51,21 @@ export async function loginUser(req, res) {
     }
   } catch (error) {
     res.status(500).send(error);
+  }
+}
+
+export async function logoutUser(req, res) {
+  const { authorization } = req.headers;
+  const token = authorization?.reaplace("Bearer", "");
+
+  if (!token) {
+    return res.sendStatus(403);
+  }
+
+  try {
+    await db.collection("sessions").deleteOne({ token });
+    res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send(error);
   }
 }
