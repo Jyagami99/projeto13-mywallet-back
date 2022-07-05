@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-let db;
+let db = null;
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
 const promise = mongoClient.connect();
 

@@ -9,7 +9,7 @@ export async function createUser(req, res) {
     const { error } = signUpUserSchema.validate(user);
 
     if (error) {
-      return res.sendStatus(422);
+      return res.status(422).send("Todos os dados são obrigatorios!");
     }
 
     const encryptedPassword = bcrypt.hashSync(user.password, 10);
@@ -19,8 +19,10 @@ export async function createUser(req, res) {
       email: user.email,
       password: encryptedPassword,
     });
-    res.status(201).send("Usuário criado com sucesso");
+    
+    res.status(201).send("Usuário criado com sucesso!");
   } catch (error) {
+    console.log("Houve um problema ao cadastrar um usuário");
     res.status(500).send(error);
   }
 }
@@ -31,25 +33,35 @@ export async function loginUser(req, res) {
     const { error } = signInUserSchema.validate(user);
 
     if (error) {
-      return res.sendStatus(422);
+      return res.status(422).send("Todos os dados são obrigatorios!");
     }
 
     const userToken = await db
       .collection("users")
       .findOne({ email: user.email });
 
-    if (user && bcrypt.compareSync(user.password, userToken.password)) {
+    if (!userToken) {
+      return res.status(422).send("Senha ou email incorretos!");
+    }
+
+    const decryptedPassword = bcrypt.compareSync(
+      user.password,
+      userToken.password
+    );
+
+    if (decryptedPassword) {
       const token = uuid();
 
       await db.collection("sessions").insertOne({
         token,
-        userId: user._id,
+        userId: userToken._id,
       });
-      return res.status(201).send({ token });
-    } else {
-      return res.status(401).send("Senha ou email incorretos!");
+      return res.status(201).send({ token, name: userToken.name });
     }
+
+    res.status(201).send("Logado com sucesso!");
   } catch (error) {
+    console.error("Houve um problema ao logar o usuário!");
     res.status(500).send(error);
   }
 }

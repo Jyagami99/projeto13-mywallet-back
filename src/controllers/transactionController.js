@@ -5,11 +5,13 @@ import { transactionSchema } from "../schemas/transactionSchema.js";
 export async function getTransactions(req, res) {
   const { user } = res.locals;
   try {
+    console.log(user);
     const transactions = await db
       .collection("transactions")
-      .find({ userId: user._id })
+      .find({ userId: user.userId })
       .toArray();
-    res.send(transactions);
+
+    res.status(200).send(transactions);
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -23,15 +25,14 @@ export async function postTransactions(req, res) {
     return res.status(422).send(error.details.map((detail) => detail.message));
   }
 
-  const { user } = res.locals;
   try {
-    const { type, description, value } = req.body;
+    const { user } = res.locals;
     await db.collection("transactions").insertOne({
       type,
       value,
       description,
       date: dayjs().format("DD/MM"),
-      userId: user._id,
+      userId: user.userId,
     });
     res.sendStatus(201);
   } catch (error) {
