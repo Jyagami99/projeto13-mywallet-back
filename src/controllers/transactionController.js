@@ -5,7 +5,6 @@ import { transactionSchema } from "../schemas/transactionSchema.js";
 export async function getTransactions(req, res) {
   const { user } = res.locals;
   try {
-    console.log(user);
     const transactions = await db
       .collection("transactions")
       .find({ userId: user.userId })
@@ -27,6 +26,8 @@ export async function postTransactions(req, res) {
 
   try {
     const { user } = res.locals;
+    const { type, value, description } = body;
+
     await db.collection("transactions").insertOne({
       type,
       value,
