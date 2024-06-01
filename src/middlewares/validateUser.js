@@ -14,7 +14,7 @@ async function validateUser(req, res, next) {
       return res.status(401).send("Sessão não encontrada");
     }
 
-    const user = await db.collection("users").findOne({ _idd: session.userId });
+    const user = await db.collection("users").findOne({ _id: session.userId });
     if (!user) {
       return res.status(401).send("Usuário não encontrado!");
     }
